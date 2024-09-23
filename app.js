@@ -1,75 +1,38 @@
-import 'dotenv/config';
-import express from 'express';
-import {
-  InteractionType,
-  InteractionResponseType,
-} from 'discord-interactions';
-import { VerifyDiscordRequest } from './utils.js';
-import ytdl from 'ytdl-core';
+import { readdirSync } from 'node:fs';
+import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import config from './config.json' with { type: "json" };
+import { dirname } from 'path';
+import { join } from 'node:path';
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-app.use(express.json({ verify: VerifyDiscordRequest(process.env.PUBLIC_KEY) }));
+const { token } = config;
 
-app.post('/interactions', async function (req, res) {
-  const { type, data, member } = req.body;
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates] });
 
-  if (type === InteractionType.PING) {
-    return res.send({ type: InteractionResponseType.PONG });
-  }
+client.commands = new Collection();
 
-  if (type === InteractionType.APPLICATION_COMMAND) {
-    const { name, options } = data;
-
-    switch (name) {
-    case 'hyuck': return hyuck(res);
-    case 'restart': return restart(res);
-    case 'play': 
-    console.log(member.user.voice);
-      const voiceChannel = member.user.voice.channel;
-      const song = options[0].value;
-      if (!voiceChannel) {
-        return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: 'You need to be in a voice channel to use this command.',
-          },
-        });
-      }
-
-      const connection = await voiceChannel.join();
-      const stream = ytdl(song, { filter: 'audioonly' });
-      const dispatcher = connection.play(stream);
-
-      dispatcher.on('finish', () => {
-        voiceChannel.leave();
-      });
-
-      return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: 'Playing audio from YouTube...',
-        },
-      });
-    default:
-      console.error('Unknown command:', name);
-    }
-  }
-});
-
-async function hyuck(res) {
-  return res.send({
-    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-    data: {
-      content: 'Ahyuck!',
-    },
-  });
+const commandPath = 'commands'
+for (const commandFile of readdirSync(commandPath)) {
+	const {command} = await import(join(dirname(import.meta.url), commandPath, commandFile));
+	
+	if ('data' in command && 'execute' in command) {
+		client.commands.set(command.data.name, command);
+	} else {
+		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+	}
 }
 
-async function play(res, song, member) {
-  
+const eventPath = 'events'
+for (const eventFile of readdirSync(eventPath)) {
+	const {event} = await import(join(dirname(import.meta.url), eventPath, eventFile));
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
+	}
 }
 
-app.listen(PORT, () => {
-  console.log('Listening on port', PORT);
-});
+client.on('debug', console.log);
+client.on('warn', console.warn);
+client.on('error', console.error);
+
+client.login(token);
