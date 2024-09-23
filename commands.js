@@ -4,7 +4,7 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { dirname } from 'path';
 
-const { clientId, jaysId: guildId, token } = config;
+const { clientId, guildId, token } = config;
 const rest = new REST().setToken(token);
 
 const action = process.argv[2];
