@@ -7,9 +7,9 @@ const VOLUME = 0.5;
 
 export const command = {
 	data: new SlashCommandBuilder()
-		.setName('play')
-		.setDescription('Play a song from the library')
-        .addStringOption(option => option.setName('song').setDescription('Song to play').setRequired(true)),
+		.setName('youtube')
+		.setDescription('Play a song from youtube')
+        .addStringOption(option => option.setName('song').setDescription('Youtube song to play').setRequired(true)),
 	async execute(interaction) {
         try {
             const song = interaction.options.getString('song');
@@ -22,13 +22,12 @@ export const command = {
             const connection = getConnection(voiceChannel);    
             const player = getPlayer(connection);
 
-            const resource = createAudioResource(`songs/${song}.opus`, {inlineVolume: true, inputType: StreamType.Opus});
-            resource.volume.setVolume(VOLUME);
+            const stream = ytdl(song, { filter: 'audioonly' });
+            const resource = createAudioResource(stream);
         
             player.play(resource);
 
-            const songTitle = song.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-            await interaction.reply(`Playing ${songTitle}`);
+            await interaction.reply(`Playing ${song}`);
         } catch (error) {
             console.error(`Error: ${error}`);
             await interaction.reply(error);
