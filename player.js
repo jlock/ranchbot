@@ -1,29 +1,44 @@
 import { createAudioPlayer } from '@discordjs/voice';
 
-let player;
+const audioPlayer = createAudioPlayer();
 
-export function getPlayer(connection) {
-    if (!player) {
-        createPlayer();
+audioPlayer.on('error', error => {
+    console.error(error);
+});
+
+audioPlayer.on('stateChange', (oldState, newState) => {
+    console.log(`Player transitioned from ${oldState.status} to ${newState.status}`);  
+    
+    if (newState.status === 'idle' && queue.length > 0) {
+        const next = queue.shift();
+        audioPlayer.play(next.resource);
+        next.interaction.followUp(`Playing ${next.song}`);
     }
+});
 
-    connection.subscribe(player);
-    
+audioPlayer.on('subscribe', connection => {
+    console.log(`Subscribed to connection ${connection}`);
+});
+
+const queue = [];
+const player = {
+    async play(song, resource, connection, interaction) {
+        connection.subscribe(audioPlayer);
+
+        if (audioPlayer.state.status === 'idle') {
+            audioPlayer.play(resource);
+            return `Playing ${song}`;
+        } else {
+            queue.push({
+                song: song, 
+                resource: resource, 
+                interaction: interaction
+            });
+            return `Queuing ${song}`;
+        }
+    }
+};
+
+export function getPlayer() {
     return player;
-}
-
-function createPlayer() {
-    player = createAudioPlayer();
-
-    player.on('error', error => {
-        console.error(`Error: ${error.message} with resource ${error.resource.metadata.title}`);
-    });
-    
-    player.on('stateChange', (oldState, newState) => {
-        console.log(`Player transitioned from ${oldState.status} to ${newState.status}`);    
-    });
-
-    player.on('subscribe', connection => {
-        console.log(`Subscribed to connection ${connection}`);
-    });
 }

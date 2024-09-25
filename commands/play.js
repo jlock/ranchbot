@@ -25,10 +25,8 @@ export const command = {
             const resource = createAudioResource(`songs/${song}.opus`, {inlineVolume: true, inputType: StreamType.Opus});
             resource.volume.setVolume(VOLUME);
         
-            player.play(resource);
-
-            const songTitle = song.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-            await interaction.reply(`Playing ${songTitle}`);
+            const response = await player.play(song, resource, connection, interaction);
+            await interaction.reply(response);
         } catch (error) {
             console.error(`Error: ${error}`);
             await interaction.reply(error);
