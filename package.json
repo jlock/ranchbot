@@ -8,10 +8,10 @@
     "node": "^20.0.0"
   },
   "scripts": {
-    "start": "node index.js",
     "commands": "node commands.js register",
-    "delete_command": "node commands.js delete $1",
-    "dev": "nodemon index.js",
+    "delete_commands": "node commands.js delete $1",
+    "ranch": "nodemon bots/ranch.js",
+    "gnome": "nodemon bots/gnome.js",
     "ngrok": "ngrok http http://localhost:3000",
     "download": "node scripts/download-file $1 $2"
   },
