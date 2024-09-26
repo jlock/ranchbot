@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { createAudioResource, StreamType } from '@discordjs/voice';
+import { createAudioResource } from '@discordjs/voice';
 import { getPlayer } from '../player.js';
 import { getConnection } from '../connection.js';
-
-const VOLUME = 0.5;
+import ytdl from '@distube/ytdl-core';
 
 export const command = {
 	data: new SlashCommandBuilder()
@@ -13,6 +12,12 @@ export const command = {
 	async execute(interaction) {
         try {
             const song = interaction.options.getString('song');
+
+            if (!ytdl.validateURL(song)) {
+                await interaction.reply('Invalid YouTube URL!');
+                return;
+            }
+
             if (!song) {
                 await interaction.reply('You need to provide a song to play!');
                 return;
@@ -25,9 +30,8 @@ export const command = {
             const stream = ytdl(song, { filter: 'audioonly' });
             const resource = createAudioResource(stream);
         
-            player.play(resource);
-
-            await interaction.reply(`Playing ${song}`);
+            const response = await player.play(song, resource, connection, interaction);
+            await interaction.reply(response);
         } catch (error) {
             console.error(`Error: ${error}`);
             await interaction.reply(error);

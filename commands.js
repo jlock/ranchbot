@@ -4,16 +4,15 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { dirname } from 'path';
 
-const { clientId, guildId, token } = config;
+const { clientId, jaysId, ranchId, token } = config;
+const guildIds = [jaysId, ranchId];
 const rest = new REST().setToken(token);
 
 const action = process.argv[2];
 
-console.log(process.argv);
-
 switch (action) {
 	case 'register': register(); break;
-	case 'delete': deleteCommand(process.argv[3]); break;
+	case 'delete': deleteAllCommands(); break;
 	default: console.log('Please provide an action. [register|delete]'); break;
 }
 
@@ -34,20 +33,28 @@ async function register() {
 		try {
 			console.log(`Started refreshing ${commands.length} application (/) commands.`);
 	
-			const data = await rest.put(
-				Routes.applicationGuildCommands(clientId, guildId),
-				{ body: commands },
-			);
-	
-			console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+			for (const guildId of guildIds) {
+				const data = await rest.put(
+					Routes.applicationGuildCommands(clientId, guildId),
+					{ body: commands },
+				);
+
+				console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+			}
 		} catch (error) {
 			console.error(error);
 		}
 	})();	
 }
 
-async function deleteCommand(commandId) {
-	rest.delete(Routes.applicationCommand(clientId, commandId))
-		.then(() => console.log('Successfully deleted application command'))
-		.catch(console.error);
+async function deleteAllCommands() {
+	for (const guildId of guildIds) {
+		rest.put(Routes.applicationGuildCommands(clientId, guildId))
+			.then(() => console.log('Successfully deleted commands'))
+			.catch(console.error);
+
+		rest.put(Routes.applicationCommands(clientId))
+			.then(() => console.log('Successfully deleted global commands'))
+			.catch(console.error);
+	}
 }
