@@ -8,8 +8,8 @@
     "node": "^20.0.0"
   },
   "scripts": {
-    "commands": "node commands.js register",
-    "delete_commands": "node commands.js delete $1",
+    "commands": "node scripts/commands.js register",
+    "delete_commands": "node scripts/commands.js delete",
     "ranch": "nodemon bots/ranch.js",
     "gnome": "nodemon bots/gnome.js",
     "ngrok": "ngrok http http://localhost:3000",

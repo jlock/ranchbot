@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { createAudioResource } from '@discordjs/voice';
-import { getPlayer } from '../player.js';
-import { getConnection } from '../connection.js';
+import { getPlayer } from '../ultilities/player.js';
+import { getConnection } from '../ultilities/connection.js';
 import ytdl from '@distube/ytdl-core';
 
 export const command = {

@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import config from './config.json' with { type: "json" };
+import config from '../config.json' with { type: "json" };
 import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { dirname } from 'path';
@@ -19,7 +19,7 @@ async function register() {
 	const commands = [];
 
 	for (const commandFile of readdirSync('commands')) {
-	  const {command} = await import(join(dirname(import.meta.url), 'commands', commandFile));
+	  const {command} = await import(`../commands/${commandFile}`);
 	
 	  if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());
