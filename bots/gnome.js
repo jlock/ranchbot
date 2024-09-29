@@ -17,7 +17,7 @@ if (guildId === undefined || channelId === undefined || secondsTimeout === undef
 	process.exit(1);
 }
 
-const { token } = config.gnome;
+const { token } = config.discord.gnome;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates] });
 

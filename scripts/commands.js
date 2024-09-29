@@ -1,10 +1,10 @@
 import { REST, Routes } from 'discord.js';
 import config from '../config.json' with { type: "json" };
 import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
-import { dirname } from 'path';
 
-const { clientId, guildIds, token } = config.ranch;
+const { client, guilds } = config.discord.ranch;
+const { token } = config.discord.ranch;
+
 const rest = new REST().setToken(token);
 
 const action = process.argv[2];
@@ -32,9 +32,9 @@ async function register() {
 		try {
 			console.log(`Started refreshing ${commands.length} application (/) commands.`);
 	
-			for (const guildId of guildIds) {
+			for (const guild of guilds) {
 				const data = await rest.put(
-					Routes.applicationGuildCommands(clientId, guildId),
+					Routes.applicationGuildCommands(client, guild),
 					{ body: commands },
 				);
 
@@ -47,12 +47,12 @@ async function register() {
 }
 
 async function deleteAllCommands() {
-	for (const guildId of guildIds) {
-		rest.put(Routes.applicationGuildCommands(clientId, guildId))
+	for (const guild of guilds) {
+		rest.put(Routes.applicationGuildCommands(client, guild))
 			.then(() => console.log('Successfully deleted commands'))
 			.catch(console.error);
 
-		rest.put(Routes.applicationCommands(clientId))
+		rest.put(Routes.applicationCommands(client))
 			.then(() => console.log('Successfully deleted global commands'))
 			.catch(console.error);
 	}

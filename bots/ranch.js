@@ -2,9 +2,17 @@ import { readdirSync } from 'node:fs';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import config from '../config.json' with { type: "json" };
 
-const { token } = config.ranch;
+const { token } = config.discord.ranch;
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates] });
+const client = new Client({ 
+	intents: [
+		GatewayIntentBits.Guilds, 
+		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent, 
+		GatewayIntentBits.GuildMembers
+	] 
+});
 
 client.commands = new Collection();
 
@@ -32,5 +40,9 @@ for (const eventFile of readdirSync(eventPath)) {
 client.on('debug', console.log);
 client.on('warn', console.warn);
 client.on('error', console.error);
+
+client.on('ready', async () => {
+	console.log(`Logged in as ${client.user.tag}`);
+});
 
 client.login(token);

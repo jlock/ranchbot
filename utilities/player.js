@@ -12,7 +12,9 @@ audioPlayer.on('stateChange', (oldState, newState) => {
     if (newState.status === 'idle' && queue.length > 0) {
         const next = queue.shift();
         audioPlayer.play(next.resource);
-        next.interaction.followUp(`Playing ${next.song}`);
+        if (next.interaction !== undefined) {
+            next.interaction.followUp(`Playing ${next.song}`);
+        }
     }
 });
 
@@ -21,7 +23,7 @@ audioPlayer.on('subscribe', connection => {
 });
 
 const queue = [];
-const player = {
+export const player = {
     async play(song, resource, connection, interaction) {
         connection.subscribe(audioPlayer);
 
@@ -38,7 +40,3 @@ const player = {
         }
     }
 };
-
-export function getPlayer() {
-    return player;
-}
