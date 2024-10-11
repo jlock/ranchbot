@@ -1,6 +1,6 @@
 import { joinVoiceChannel, getVoiceConnection } from '@discordjs/voice';
 
-export function getConnection(voiceChannel) {
+export function connect(voiceChannel) {
     if (!voiceChannel) {
         throw 'You need to be in a voice channel to play music!';
     }
@@ -12,7 +12,6 @@ export function getConnection(voiceChannel) {
             channelId: voiceChannel.id,
             guildId: voiceChannel.guild.id,
             adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-            selfDeaf: false,
         });
     }
 
