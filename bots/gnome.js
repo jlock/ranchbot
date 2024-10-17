@@ -5,11 +5,7 @@ import { joinVoiceChannel, createAudioPlayer, createAudioResource, StreamType } 
 const guildId = process.argv[2];
 const channelId = process.argv[3];
 const secondsTimeout = process.argv[4];
-const sounds = [
-	'sounds/gnome.opus',
-	'sounds/reverb.opus',
-	'sounds/goofy.opus',
-];
+const sounds = ['sounds/gnome.opus', 'sounds/reverb.opus'];
 const volume = 0.1;
 
 if (guildId === undefined || channelId === undefined || secondsTimeout === undefined) {
