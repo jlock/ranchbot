@@ -25,22 +25,20 @@ export const command = {
             if (fs.existsSync(localFileName)) {
                 console.log('Local file found, playing');
                 resource = createAudioResource(localFileName, { inlineVolume: true, inputType: StreamType.Opus });
-            }
-
-            if (ytdl.validateURL(song)) {
+            } else if (ytdl.validateURL(song)) {
                 console.log('Youtube URL detected, playing');
                 const stream = ytdl(song, { filter: 'audioonly' });
                 resource = createAudioResource(stream);    
-            }
-
-            song = await youtubeSearch(song);
-            if (song) {
-                console.log('Youtube search found', song);
-                const stream = ytdl(song, { filter: 'audioonly' });
-                resource = createAudioResource(stream);    
             } else {
-                await interaction.reply('No song found on youtube or on the server');
-                return;
+                song = await youtubeSearch(song);
+                if (song) {
+                    console.log('Youtube search found', song);
+                    const stream = ytdl(song, { filter: 'audioonly' });
+                    resource = createAudioResource(stream);    
+                } else {
+                    await interaction.reply('No song found on youtube or on the server');
+                    return;
+                }
             }
 
             const voiceChannel = interaction.member.voice.channel;
