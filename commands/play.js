@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { createAudioResource } from '@discordjs/voice';
+import { createAudioResource, StreamType } from '@discordjs/voice';
 import { player } from '../utilities/player.js';
 import { connect } from '../utilities/connection.js';
 import ytdl from '@distube/ytdl-core';
