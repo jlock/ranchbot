@@ -1,22 +1,22 @@
 {
-	"discord": {
-        "token": "",
-		"name": {
-			"client": "",
-			"guilds": ["", ""]
-		},
-		"gnome": {
-			"client": "",
-			"guilds": ["", ""]
-		}
-	},
-	"openai": {
-		"organization": "",
-		"apiKey": ""
+        "discord": {
+                "ranch": {
+                        "token": "",
+                        "client": "",
+                        "guilds": [""]
+                },
+                "gnome": {
+                        "token": "",
+                        "client": "",
+                        "guilds": [""]
+                }
+        },
+        "openai": {
+                "organization": "",
+                "apiKey": ""
 
-	},
-	"google": {
-		"apiKey": ""
-	}
+        },
+        "google": {
+                "apiKey": ""
+        }
 }
-
