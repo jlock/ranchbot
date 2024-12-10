@@ -4,7 +4,7 @@ const folder = process.argv[2];
 const fileName = process.argv[3];
 const url = process.argv[4];
 
-const command = `yt-dlp -o '${folder}/${fileName}.%(ext)s' ${url} --audio-format opus -x`;
+const command = `yt-dlp -o '${folder}/${fileName}.%(ext)s' ${url} --audio-format opus -x --cookies cookies.txt`;
 console.log(command);
 exec(command, (error, stdout, stderr) => {
   if (error) {

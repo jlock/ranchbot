@@ -3,3 +3,6 @@ node_modules
 config.json
 songs
 speech
+cookies.txt
+cookies.json
+*/-base.js

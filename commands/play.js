@@ -5,6 +5,7 @@ import { connect } from '../utilities/connection.js';
 import ytdl from '@distube/ytdl-core';
 import config from '../config.json' with { type: "json" };
 import fs from 'node:fs';
+import { agent } from '../utilities/ytdl.js';
 
 export const command = {
 	data: new SlashCommandBuilder()
@@ -27,13 +28,13 @@ export const command = {
                 resource = createAudioResource(localFileName, { inlineVolume: true, inputType: StreamType.Opus });
             } else if (ytdl.validateURL(song)) {
                 console.log('Youtube URL detected, playing');
-                const stream = ytdl(song, { filter: 'audioonly' });
+                const stream = ytdl(song, { filter: 'audioonly', agent });
                 resource = createAudioResource(stream);    
             } else {
                 song = await youtubeSearch(song);
                 if (song) {
                     console.log('Youtube search found', song);
-                    const stream = ytdl(song, { filter: 'audioonly' });
+                    const stream = ytdl(song, { filter: 'audioonly', agent });
                     resource = createAudioResource(stream);    
                 } else {
                     await interaction.reply('No song found on youtube or on the server');
@@ -48,7 +49,7 @@ export const command = {
             await interaction.reply(response);
         } catch (error) {
             console.error(error);
-            await interaction.reply(error);
+            await interaction.reply(`${error}`);
         }
 	},
 };

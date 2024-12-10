@@ -3,8 +3,15 @@ import { createAudioPlayer } from '@discordjs/voice';
 const audioPlayer = createAudioPlayer();
 const queue = [];
 
+// Hold onto the previous interaction from play to send messages
+let currentInteraction;
+
 audioPlayer.on('error', error => {
     console.error(error);
+
+    if (currentInteraction) {
+        currentInteraction.followUp(`${error}`);
+    }
 });
 
 audioPlayer.on('stateChange', (oldState, newState) => {
@@ -26,7 +33,14 @@ async function playNext() {
     if (queue.length === 0) return; 
 
     const next = queue.shift();
-    audioPlayer.play(next.resource);
+    try {
+        await audioPlayer.play(next.resource);
+    } catch (error) {
+        console.error('Error playing next song:', error);
+        await next.interaction.followUp('Error playing next song');
+        return;
+    }
+
     if (next.interaction !== undefined) {
         next.interaction.followUp(`Playing ${next.song}`);
     }
@@ -35,10 +49,16 @@ async function playNext() {
 export const player = {
     async play(song, resource, connection, interaction) {
         connection.subscribe(audioPlayer);
+        currentInteraction = interaction;
 
         if (audioPlayer.state.status === 'idle') {
-            audioPlayer.play(resource);
-            return `Playing ${song}`;
+            try {
+                await audioPlayer.play(resource);
+                return `Playing ${song}`;
+            } catch (error) {
+                console.error('Error playing song:', error);
+                return `Error playing ${song}`;
+            }
         } else {
             queue.push({
                 song: song, 
