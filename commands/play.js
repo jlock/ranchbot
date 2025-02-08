@@ -60,7 +60,7 @@ async function youtubeSearch(searchString) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            console.error('Search: Error fetching the top video:', response.statusText);
+            console.error('Search: Error fetching the top video:', response);
             return false;
         }
         const data = await response.json();

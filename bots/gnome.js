@@ -1,12 +1,12 @@
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import config from '../config.json' with { type: "json" };
 import { joinVoiceChannel, createAudioPlayer, createAudioResource, StreamType } from '@discordjs/voice';
+import { listen } from '../utilities/listen.js';
 
 const guildId = process.argv[2];
 const channelId = process.argv[3];
 const secondsTimeout = process.argv[4];
-const sounds = ['sounds/gnome.opus', 'sounds/reverb.opus'];
-const volume = 0.1;
+const sounds = ['sounds/gnome.opus', 'sounds/reverb.opus', 'sounds/goofy.opus'];
 
 if (guildId === undefined || channelId === undefined || secondsTimeout === undefined) {
 	console.error('Please provide a guild ID and a channel ID. `yarn gnome <guildId> <channelId> <secondsTimeout>`');
@@ -27,6 +27,7 @@ client.login(token);
 
 client.on('ready', async () => {
 	startTheGnome();
+	startListening();
 });
 
 const audioPlayer = createAudioPlayer();
@@ -64,6 +65,17 @@ function startTheGnome() {
 	setTimeout(() => {
 		startTheGnome();
 	}, timeout);
+}
+
+function startListening() {
+	const connection = joinVoiceChannel({
+		channelId,
+		guildId,
+		adapterCreator: client.guilds.cache.get(guildId).voiceAdapterCreator,
+		selfDeaf: false,
+	});
+
+	listen(connection);
 }
 
 async function playSound() {
