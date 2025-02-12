@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import ytdl from '@distube/ytdl-core';
 import { exec } from 'child_process';
 
@@ -8,7 +8,7 @@ export const command = {
 		.setDescription('Download a song from youtube URL')
         .addStringOption(option => option.setName('song').setDescription('Song to download').setRequired(true))
         .addStringOption(option => option.setName('name').setDescription('Name the song').setRequired(true)),
-	async execute(interaction) {
+	async execute(interaction: ChatInputCommandInteraction) {
         try {
             let song = interaction.options.getString('song');
             
@@ -41,7 +41,7 @@ export const command = {
             }
         } catch (error) {
             console.error(error);
-            await interaction.reply(error);
+            await interaction.reply({ content: `An error occurred: ${error}`, ephemeral: true });
         }
 	},
 };

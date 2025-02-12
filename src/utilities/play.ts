@@ -1,6 +1,6 @@
-import { createAudioPlayer, createAudioResource, StreamType } from "@discordjs/voice";
+import { createAudioPlayer, createAudioResource, StreamType, VoiceConnection } from "@discordjs/voice";
 
-export function play(connection) {
+export function play(connection: VoiceConnection) {
     const audioPlayer = createAudioPlayer();
     connection.subscribe(audioPlayer);
 
@@ -8,7 +8,7 @@ export function play(connection) {
       inlineVolume: true,
       inputType: StreamType.Opus,
     });
-    gnomeSoundResource.volume.setVolume(0.5);
 
+    gnomeSoundResource.volume?.setVolume(0.5);
     audioPlayer.play(gnomeSoundResource);
 }

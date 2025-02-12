@@ -1,10 +1,10 @@
 import { play } from "./play.js";
-
+import { VoiceConnection } from "@discordjs/voice";
 const TIMER_DURATION = 15000;
 let speakerCount = 0;
-let timer;
+let timer: NodeJS.Timeout | undefined;
 
-export async function listen(connection) {
+export async function listen(connection: VoiceConnection) {
   console.log("Listening...");
 
   connection.receiver.speaking.on("start", async (userId) => {

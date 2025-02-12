@@ -1,6 +1,17 @@
 import { joinVoiceChannel, getVoiceConnection } from '@discordjs/voice';
+import { ChatInputCommandInteraction, VoiceBasedChannel } from 'discord.js';
 
-export function connect(voiceChannel) {
+export function getVoiceChannel(interaction: ChatInputCommandInteraction) {
+    const member = interaction.member;
+    let voiceChannel;
+    if (member && 'voice' in member) {
+        voiceChannel = member.voice.channel;
+    }
+
+    return voiceChannel;
+}
+
+export function connect(voiceChannel: VoiceBasedChannel) {
     if (!voiceChannel) {
         throw 'You need to be in a voice channel to play music!';
     }

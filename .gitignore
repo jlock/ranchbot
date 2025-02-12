@@ -6,3 +6,6 @@ speech
 cookies.txt
 cookies.json
 */-base.js
+.webui_secret_key
+dist
+.DS_Store

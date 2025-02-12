@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import config from '../config.json' with { type: "json" };
+import config from '../../config.json' with { type: "json" };
 import { readdirSync } from 'node:fs';
 
 const { client, guilds } = config.discord.ranch;
@@ -33,12 +33,12 @@ async function register() {
 			console.log(`Started refreshing ${commands.length} application (/) commands.`);
 	
 			for (const guild of guilds) {
-				const data = await rest.put(
+				await rest.put(
 					Routes.applicationGuildCommands(client, guild),
 					{ body: commands },
 				);
 
-				console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+				console.log(`Successfully reloaded application (/) commands.`);
 			}
 		} catch (error) {
 			console.error(error);

@@ -1,6 +1,6 @@
 import { readdirSync } from 'node:fs';
-import { Collection, GatewayIntentBits } from 'discord.js';
-import config from '../config.json' with { type: "json" };
+import { GatewayIntentBits } from 'discord.js';
+import config from '../../config.json' with { type: "json" };
 import {createClient} from '../utilities/client.js';
 
 const { token } = config.discord.ranch;
@@ -11,20 +11,19 @@ const intents = [
 	GatewayIntentBits.MessageContent, 
 	GatewayIntentBits.GuildMembers
 ] 
-const client = createClient({token, intents, ready: () => {
-	console.log(`Logged in as ${client.user.tag}`);
+const client = createClient({token, intents, ready: client => {
+	console.log(`Logged in as ${client.user?.tag}`);
 }});
-
-client.commands = new Collection();
 
 const commandPath = 'commands'
 for (const commandFile of readdirSync(commandPath)) {
 	const {command} = await import(`../${commandPath}/${commandFile}`);
 	
 	if ('data' in command && 'execute' in command) {
+		// @ts-ignore
 		client.commands.set(command.data.name, command);
 	} else {
-		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		console.log(`[WARNING] The command at ${command} is missing a required "data" or "execute" property.`);
 	}
 }
 

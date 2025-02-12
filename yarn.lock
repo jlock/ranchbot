@@ -123,6 +123,18 @@
   dependencies:
     "@types/node" "*"
 
+"@types/yargs-parser@*":
+  version "21.0.3"
+  resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-21.0.3.tgz#815e30b786d2e8f0dcd85fd5bcf5e1a04d008f15"
+  integrity sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==
+
+"@types/yargs@^17.0.33":
+  version "17.0.33"
+  resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.33.tgz#8c32303da83eec050a84b3c7ae7b9f922d13e32d"
+  integrity sha512-WpxBCKWPLr4xSsHgz511rFJAM+wS28w2zEO1QDNY5zM/S8ok70NNfztH0xwhqKyaK0OHCbN98LDAZuy1ctxDkA==
+  dependencies:
+    "@types/yargs-parser" "*"
+
 "@vladfrangu/async_event_emitter@^2.2.4", "@vladfrangu/async_event_emitter@^2.4.6":
   version "2.4.6"
   resolved "https://registry.npmjs.org/@vladfrangu/async_event_emitter/-/async_event_emitter-2.4.6.tgz"
@@ -544,6 +556,11 @@ tslib@^2.6.2, tslib@^2.6.3:
   version "2.7.0"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.7.0.tgz"
   integrity sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==
+
+typescript@^5.7.3:
+  version "5.7.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.7.3.tgz#919b44a7dbb8583a9b856d162be24a54bf80073e"
+  integrity sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==
 
 undefsafe@^2.0.5:
   version "2.0.5"

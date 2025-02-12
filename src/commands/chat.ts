@@ -1,6 +1,4 @@
-//ollama run llama3.2
-
-import { SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { spawn } from "child_process";
 
 export const command = {
@@ -13,7 +11,7 @@ export const command = {
         .setDescription("Prompt for the AI")
         .setRequired(true)
     ),
-  async execute(interaction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     try {
       const prompt = interaction.options.getString("prompt");
 
@@ -56,7 +54,7 @@ export const command = {
       });
     } catch (error) {
       console.error(error);
-      await interaction.reply(error);
+      await interaction.reply({ content: "An error occurred while processing your request", ephemeral: true });
     }
   },
 };
