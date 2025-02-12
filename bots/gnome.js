@@ -1,99 +1,36 @@
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { GatewayIntentBits } from 'discord.js';
 import config from '../config.json' with { type: "json" };
-import { joinVoiceChannel, createAudioPlayer, createAudioResource, StreamType } from '@discordjs/voice';
+import { joinVoiceChannel } from '@discordjs/voice';
 import { listen } from '../utilities/listen.js';
+import { createClient } from '../utilities/client.js';
+import yargs from 'yargs';
+const argv = yargs(process.argv.slice(2))
+  .option('guild', {
+    alias: 'g',
+    description: 'Discord guild (server) ID',
+    type: 'string',
+    demandOption: true
+  })
+  .option('channel', {
+    alias: 'c', 
+    description: 'Voice channel ID',
+    type: 'string',
+    demandOption: true
+  })
+  .argv;
 
-const guildId = process.argv[2];
-const channelId = process.argv[3];
-const secondsTimeout = process.argv[4];
-const sounds = ['sounds/gnome.opus', 'sounds/reverb.opus', 'sounds/goofy.opus'];
-
-if (guildId === undefined || channelId === undefined || secondsTimeout === undefined) {
-	console.error('Please provide a guild ID and a channel ID. `yarn gnome <guildId> <channelId> <secondsTimeout>`');
-	process.exit(1);
-}
+const guildId = argv.guild;
+const channelId = argv.channel;
 
 const { token } = config.discord.gnome;
-
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates] });
-
-client.commands = new Collection();
-
-client.on('debug', console.log);
-client.on('warn', console.warn);
-client.on('error', console.error);
-
-client.login(token);
-
-client.on('ready', async () => {
-	startTheGnome();
-	startListening();
-});
-
-const audioPlayer = createAudioPlayer();
-audioPlayer.on('error', error => { console.error(error) });
-audioPlayer.on('subscribe', connection => console.log('Subscribed to connection'));
-audioPlayer.on('stateChange', (oldState, newState) => {
-	console.log(`Player transitioned from ${oldState.status} to ${newState.status}`);
-});
-
-let timeToGnome = 0;
-function countdown() {
-	if (timeToGnome <= 0) {
-		console.log(`No timeout set, waiting for next gnome`);
-	} else {
-		console.log(`Time to gnome: ${timeToGnome/1000}`);
-	}	
-	
-	setTimeout(() => {
-		timeToGnome -= 1000;
-		countdown();
-	}, 1000);
-}
-countdown();
-
-function startTheGnome() {
-	function getTimeout(max) {
-		const random = Math.floor(Math.random() * (max * 1000)) + 5000;
-		return random + 5000;
-	}
-	
-	playSound();
-
-	const timeout = getTimeout(secondsTimeout);
-	timeToGnome = timeout;
-	setTimeout(() => {
-		startTheGnome();
-	}, timeout);
-}
-
-function startListening() {
+const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates];
+const client = createClient({token, intents, ready: () => {
 	const connection = joinVoiceChannel({
 		channelId,
 		guildId,
 		adapterCreator: client.guilds.cache.get(guildId).voiceAdapterCreator,
-		selfDeaf: false,
+		selfDeaf: true,
 	});
 
 	listen(connection);
-}
-
-async function playSound() {
-	const connection = joinVoiceChannel({
-		channelId,
-		guildId,
-		adapterCreator: client.guilds.cache.get(guildId).voiceAdapterCreator,
-		selfDeaf: false,
-	});
-
-	connection.subscribe(audioPlayer);    
-	
-	const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-	console.log(`Playing ${randomSound}`);
-	const gnomeSoundResource = createAudioResource(randomSound, {inlineVolume: true, inputType: StreamType.Opus});
-	const volume = Math.random() * (0.5 - 0.1) + 0.1;
-	console.log(`Setting volume to ${volume}`);
-	gnomeSoundResource.volume.setVolume(volume);
-
-    audioPlayer.play(gnomeSoundResource);
-}
+}});

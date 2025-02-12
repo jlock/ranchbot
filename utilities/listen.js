@@ -1,11 +1,6 @@
-import fs from "fs";
-import { pipeline, PassThrough } from "node:stream";
-import {
-  createAudioPlayer,
-  createAudioResource,
-  StreamType,
-} from "@discordjs/voice";
+import { play } from "./play.js";
 
+const TIMER_DURATION = 15000;
 let speakerCount = 0;
 let timer;
 
@@ -13,39 +8,30 @@ export async function listen(connection) {
   console.log("Listening...");
 
   connection.receiver.speaking.on("start", async (userId) => {
-    clearTimeout(timer);
-    timer = undefined;
+    clearTimer();
 
-    console.log(`User ${userId} started speaking`, "clearing timer");
     speakerCount++;
-    console.log("speakers", speakerCount);
+    console.log(`${userId} started speaking, speakers:`, speakerCount);
   });
 
   connection.receiver.speaking.on("end", async (userId) => {
-    console.log(`User ${userId} stopped speaking`);
+    console.log(`${userId} stopped speaking, speakers:`, speakerCount);
     speakerCount--;
-    console.log("speakers", speakerCount);
 
     if (speakerCount === 0 && timer === undefined) {
-      console.log("starting timer");
+      console.log("Silence detected, starting timer");
       timer = setTimeout(function () {
         playGnome();
-      }, 5000);
+      }, TIMER_DURATION);
     }
   });
 
   function playGnome() {
-    const audioPlayer = createAudioPlayer();
-    connection.subscribe(audioPlayer);
+    play(connection);
+    clearTimer();
+  }
 
-    const gnomeSoundResource = createAudioResource("sounds/gnome.opus", {
-      inlineVolume: true,
-      inputType: StreamType.Opus,
-    });
-    gnomeSoundResource.volume.setVolume(0.5);
-
-    audioPlayer.play(gnomeSoundResource);
-
+  function clearTimer() {
     clearTimeout(timer);
     timer = undefined;
   }
