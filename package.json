@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "engines": {
-    "node": "^20.0.0"
+    "node": "^23.0.0"
   },
   "scripts": {
     "commands": "node scripts/commands.js register",
@@ -13,7 +13,8 @@
     "ranch": "nodemon bots/ranch.js",
     "gnome": "nodemon bots/gnome.js",
     "ngrok": "ngrok http http://localhost:3000",
-    "download": "node scripts/download-file $1 $2"
+    "download": "node scripts/download-file $1 $2",
+    "prod": "pm2 start bots/ranch.js"
   },
   "author": "jlock",
   "dependencies": {
