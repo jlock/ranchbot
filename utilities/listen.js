@@ -14,8 +14,9 @@ export async function listen(connection) {
 
   connection.receiver.speaking.on("start", async (userId) => {
     clearTimeout(timer);
+    timer = undefined;
 
-    console.log(`User ${userId} started speaking`);
+    console.log(`User ${userId} started speaking`, "clearing timer");
     speakerCount++;
     console.log("speakers", speakerCount);
   });
@@ -26,6 +27,7 @@ export async function listen(connection) {
     console.log("speakers", speakerCount);
 
     if (speakerCount === 0 && timer === undefined) {
+      console.log("starting timer");
       timer = setTimeout(function () {
         playGnome();
       }, 5000);
@@ -45,5 +47,6 @@ export async function listen(connection) {
     audioPlayer.play(gnomeSoundResource);
 
     clearTimeout(timer);
+    timer = undefined;
   }
 }
